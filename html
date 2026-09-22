@@ -1,0 +1,584 @@
+<title>26년 추석 선물세트 출고 현황</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<style>
+:root {
+  --bg: #F5F0EA;
+  --surface: #FFFFFF;
+  --surface-2: #EDE8E0;
+  --border: #D8CFC3;
+  --text-primary: #1C1208;
+  --text-secondary: #5C4A35;
+  --text-muted: #9A8372;
+  --accent: #A96C30;
+
+  --c-online:  #2E7DBF;
+  --c-b2b:     #8B68C4;
+  --c-etc:     #B8964A;
+  --c-branch:  #C45050;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #18110A;
+    --surface: #221608;
+    --surface-2: #2C1D0C;
+    --border: #3E2C18;
+    --text-primary: #EEE4D8;
+    --text-secondary: #C4A882;
+    --text-muted: #8A7060;
+    --accent: #D4944A;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #18110A;
+  --surface: #221608;
+  --surface-2: #2C1D0C;
+  --border: #3E2C18;
+  --text-primary: #EEE4D8;
+  --text-secondary: #C4A882;
+  --text-muted: #8A7060;
+  --accent: #D4944A;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Noto Sans KR', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  padding: 28px 20px 48px;
+}
+
+/* ── Header ── */
+.hdr {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.hdr-left .eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.hdr-left h1 {
+  font-size: clamp(18px, 3.5vw, 26px);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+.hdr-right {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.period-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.period-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: 3px;
+}
+.period-sep {
+  color: var(--border);
+}
+
+/* ── KPI row ── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.kpi-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 3px;
+}
+.kpi-val {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(20px, 3.5vw, 28px);
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+.kpi-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+.kpi-accent .kpi-val { color: var(--accent); }
+
+/* ── Charts grid ── */
+.charts-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .kpi-row .kpi:last-child { grid-column: span 2; }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.chart-wrap {
+  position: relative;
+  width: 100%;
+}
+
+/* ── Channel legend ── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 12px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.legend-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.chart-note, .kpi-note {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 7px;
+  line-height: 1.4;
+}
+.kpi-note {
+  border-top: 1px dashed var(--border);
+  padding-top: 6px;
+  margin-top: 8px;
+}
+
+/* ── Table ── */
+.sec-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.tbl-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+thead th {
+  padding: 7px 10px;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 11px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+}
+thead th.sticky { text-align: left; position: sticky; left: 0; z-index: 2; min-width: 180px; }
+thead tr.cat-row th {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  color: #fff;
+  text-align: center;
+}
+thead tr.cat-row th.empty { background: var(--surface-2); }
+thead tr.cat-row th.cat-on { background: var(--c-online); }
+thead tr.cat-row th.cat-b  { background: var(--c-b2b); }
+thead tr.cat-row th.cat-e  { background: var(--c-etc); }
+thead tr.cat-row th.cat-br { background: var(--c-branch); }
+
+tbody tr:hover td { background: var(--surface-2); }
+tbody td {
+  padding: 8px 10px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+tbody td.sticky {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  font-weight: 500;
+  min-width: 180px;
+}
+tbody tr:hover td.sticky { background: var(--surface-2); }
+tbody td.zero { color: var(--text-muted); opacity: .35; }
+tbody td.total { font-weight: 700; color: var(--accent); }
+tbody td.excl { font-size: 10px; color: var(--accent); }
+
+tfoot td {
+  padding: 9px 10px;
+  text-align: right;
+  font-weight: 700;
+  background: var(--surface-2);
+  border-top: 2px solid var(--border);
+  white-space: nowrap;
+}
+tfoot td.sticky {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: var(--surface-2);
+}
+tfoot td.grand { color: var(--accent); }
+</style>
+
+<!-- ── HEADER ── -->
+<header class="hdr">
+  <div class="hdr-left">
+    <div class="eyebrow">TERAROSA · 물류파트</div>
+    <h1>2026 추석 선물세트 출고 현황</h1>
+    <div class="period-row">
+      <span class="period-item"><span class="period-lbl">지점</span> 8/19 – 9/22</span>
+      <span class="period-sep">·</span>
+      <span class="period-item"><span class="period-lbl">온라인몰 · B2B</span> 8/24 – 9/22</span>
+    </div>
+  </div>
+  <div class="hdr-right">9개 상품 · 15개 채널</div>
+</header>
+
+<!-- ── KPI ── -->
+<div class="kpi-row">
+  <div class="kpi kpi-accent">
+    <div class="kpi-lbl">총 출고량</div>
+    <div class="kpi-val">14,744</div>
+    <div class="kpi-sub">세트</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-lbl">최다 채널군</div>
+    <div class="kpi-val" style="font-size:clamp(14px,2.5vw,20px);margin-top:4px;">온라인몰</div>
+    <div class="kpi-sub">7,323세트 · 49.7%</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-lbl">최다 상품</div>
+    <div class="kpi-val" style="font-size:clamp(12px,2vw,17px);margin-top:5px;line-height:1.2;">드립백 세트<br><small style="font-family:'Noto Sans KR';font-size:11px;color:var(--text-muted);">(30개입)</small></div>
+    <div class="kpi-sub">6,677세트 · 45.3%</div>
+    <div class="kpi-note">*참고: 추석 패키지 소진 후 기존 드립백 패키지 출고</div>
+  </div>
+</div>
+
+<!-- ── CHARTS ── -->
+<div class="charts-row">
+  <div class="card">
+    <div class="card-title">상품별 출고량 (채널군 구성)</div>
+    <div class="chart-wrap" style="height:280px;">
+      <canvas id="barChart"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:var(--c-online)"></span>온라인몰 (자사몰+외부몰)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--c-b2b)"></span>B2B</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--c-etc)"></span>기타</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--c-branch)"></span>지점</div>
+    </div>
+    <div class="chart-note">*참고: 싱글오리진 파우더세트, 홈브루잉 스타터팩 자사몰 단독판매</div>
+  </div>
+  <div class="card">
+    <div class="card-title">채널군별 비중</div>
+    <div class="chart-wrap" style="height:220px;">
+      <canvas id="donutChart"></canvas>
+    </div>
+    <div style="margin-top:12px;">
+      <table style="width:100%;font-size:11px;border:none;">
+        <tbody id="donutLegend"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TABLE ── -->
+<div class="sec-title">채널별 상세 출고 현황</div>
+<div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr class="cat-row">
+        <th class="empty sticky" rowspan="1"></th>
+        <th class="cat-on" colspan="11">온라인몰 (자사몰 + 외부몰 위탁 + 외부몰 직납)</th>
+        <th class="cat-b" colspan="2">B2B</th>
+        <th class="cat-e" colspan="1">기타</th>
+        <th class="cat-br" colspan="1">지점</th>
+        <th class="empty" style="background:var(--surface-2);color:var(--text-secondary);">합계</th>
+      </tr>
+      <tr>
+        <th class="sticky">상품명</th>
+        <th>자사몰</th>
+        <th>스마트<br>스토어</th>
+        <th>카카오톡<br>선물하기</th>
+        <th>29CM</th>
+        <th>ESM<br>지마켓+옥션</th>
+        <th>KBPAY</th>
+        <th>KREAM</th>
+        <th>현대M<br>포인트</th>
+        <th>아트샵</th>
+        <th>컬리</th>
+        <th>쿠팡</th>
+        <th>도매<br>CMS</th>
+        <th>도매<br>(그룹웨어)</th>
+        <th>기타</th>
+        <th>지점</th>
+        <th>총합계</th>
+      </tr>
+    </thead>
+    <tbody id="tblBody"></tbody>
+    <tfoot id="tblFoot"></tfoot>
+  </table>
+</div>
+
+<script>
+const cs = getComputedStyle(document.documentElement);
+const COLORS = {
+  online: cs.getPropertyValue('--c-online').trim(),
+  b2b:    cs.getPropertyValue('--c-b2b').trim(),
+  etc:    cs.getPropertyValue('--c-etc').trim(),
+  branch: cs.getPropertyValue('--c-branch').trim(),
+};
+
+// Raw data per product
+// cols: [자사몰, SS, 카카오, 29CM, ESM, KBPAY, KREAM, 현대M, 아트샵, 컬리, 쿠팡, 도매CMS, 도매GW, 기타, 지점]
+const ROWS = [
+  { name: '[26년 추석] 간편커피 & 머그 세트',   vals: [127,93,11,13,0,2,0,11,1,65,0,8,31,19,600] },
+  { name: '[26년 추석] 드립백 & 머그 세트',      vals: [419,476,72,25,0,1,2,39,2,223,0,9,397,29,752] },
+  { name: '[26년 추석] 드립백 세트 (30개입)',    vals: [1114,1047,144,55,198,1,0,22,0,110,290,62,1115,119,2400] },
+  { name: '[26년 추석] 보름달 블렌드 & 드리퍼 세트', vals: [324,209,7,9,2,0,0,0,0,0,0,0,0,7,1800] },
+  { name: '[26년 추석] 보름달 블렌드 드립백 세트 (10개입)', vals: [492,311,26,18,21,0,0,0,0,288,0,46,0,3,0] },
+  { name: '[26년 추석] 시그니처 에티오피아 드립백 세트 (10개입)', vals: [221,30,0,0,0,0,0,0,0,96,0,6,0,3,0] },
+  { name: '[26년 추석] 엑스트라 버진 올리브 오일 세트', vals: [250,149,5,0,0,0,0,0,0,0,0,0,0,15,0] },
+  { name: '[26년 추석] 싱글오리진 파우더 커피 세트 (30개입)\n—자사몰 단독', vals: [83,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name: '[26년 추석] 홈브루잉 스타터팩\n—자사몰 단독', vals: [219,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+];
+
+// Short names for chart
+const SHORT = [
+  '간편커피 & 머그',
+  '드립백 & 머그',
+  '드립백 세트 (30개입)',
+  '보름달 & 드리퍼',
+  '보름달 드립백 (10개입)',
+  '에티오피아 드립백 (10개입)',
+  '올리브 오일',
+  '홈브루잉 스타터팩',
+  '싱글오리진 파우더 (30개입)',
+];
+
+// Compute category totals per product
+// 온라인몰 = 자사몰(0) + 외부몰위탁(1-8) + 외부몰직납(9-10)
+function catSplit(v) {
+  return {
+    on: v[0]+v[1]+v[2]+v[3]+v[4]+v[5]+v[6]+v[7]+v[8]+v[9]+v[10],
+    b:  v[11]+v[12],
+    e:  v[13],
+    br: v[14],
+  };
+}
+
+const sorted = [...ROWS].map((r, i) => ({
+  ...r,
+  short: SHORT[i],
+  total: r.vals.reduce((a, b) => a+b, 0),
+  cat: catSplit(r.vals),
+})).sort((a, b) => b.total - a.total);
+
+// ── HORIZONTAL STACKED BAR ──
+const barCtx = document.getElementById('barChart').getContext('2d');
+const barLabels = sorted.map(r => r.short);
+new Chart(barCtx, {
+  type: 'bar',
+  data: {
+    labels: barLabels,
+    datasets: [
+      { label: '온라인몰', data: sorted.map(r => r.cat.on), backgroundColor: COLORS.online },
+      { label: 'B2B',      data: sorted.map(r => r.cat.b),  backgroundColor: COLORS.b2b },
+      { label: '기타',     data: sorted.map(r => r.cat.e),  backgroundColor: COLORS.etc },
+      { label: '지점',     data: sorted.map(r => r.cat.br), backgroundColor: COLORS.branch },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        mode: 'index',
+        callbacks: {
+          label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x.toLocaleString()}`,
+          footer: items => `합계: ${items.reduce((a,i)=>a+i.parsed.x,0).toLocaleString()}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        grid: { color: 'rgba(128,100,70,.1)' },
+        ticks: {
+          color: cs.getPropertyValue('--text-muted').trim(),
+          font: { size: 10 },
+          callback: v => v >= 1000 ? (v/1000).toFixed(0)+'K' : v
+        },
+        border: { display: false }
+      },
+      y: {
+        stacked: true,
+        grid: { display: false },
+        ticks: {
+          color: cs.getPropertyValue('--text-secondary').trim(),
+          font: { size: 11 },
+        },
+        border: { display: false }
+      }
+    }
+  }
+});
+
+// ── DONUT CHART ──
+const CATS = [
+  { key: 'on', label: '온라인몰', color: COLORS.online },
+  { key: 'b',  label: 'B2B',     color: COLORS.b2b },
+  { key: 'e',  label: '기타',    color: COLORS.etc },
+  { key: 'br', label: '지점',    color: COLORS.branch },
+];
+const catTotals = { on:0, b:0, e:0, br:0 };
+ROWS.forEach(r => {
+  const c = catSplit(r.vals);
+  Object.keys(catTotals).forEach(k => catTotals[k] += c[k]);
+});
+const grand = Object.values(catTotals).reduce((a,b)=>a+b,0);
+
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: CATS.map(c => c.label),
+    datasets: [{
+      data: CATS.map(c => catTotals[c.key]),
+      backgroundColor: CATS.map(c => c.color),
+      borderWidth: 2,
+      borderColor: cs.getPropertyValue('--surface').trim(),
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.parsed.toLocaleString()}세트 (${(ctx.parsed/grand*100).toFixed(1)}%)`
+        }
+      }
+    }
+  }
+});
+
+// donut legend table
+const legendTb = document.getElementById('donutLegend');
+CATS.forEach(c => {
+  const val = catTotals[c.key];
+  const pct = (val / grand * 100).toFixed(1);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="padding:3px 0;color:var(--text-secondary);white-space:nowrap;">
+      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c.color};margin-right:5px;vertical-align:middle;"></span>${c.label}
+    </td>
+    <td style="padding:3px 0 3px 8px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;font-variant-numeric:tabular-nums;color:var(--text-primary);">${val.toLocaleString()}</td>
+    <td style="padding:3px 0 3px 6px;text-align:right;font-size:11px;color:var(--text-muted);">${pct}%</td>
+  `;
+  legendTb.appendChild(tr);
+});
+
+// ── TABLE ──
+const colTotals = Array(15).fill(0);
+const tbody = document.getElementById('tblBody');
+
+ROWS.forEach(r => {
+  const total = r.vals.reduce((a,b)=>a+b,0);
+  r.vals.forEach((v,i) => colTotals[i] += v);
+  const isExcl = r.name.includes('자사몰 단독');
+  const tr = document.createElement('tr');
+  let cells = `<td class="sticky">${r.name.replace('[26년 추석] ','').replace('\n—자사몰 단독','')}</td>`;
+  r.vals.forEach(v => {
+    cells += v === 0
+      ? `<td class="zero">—</td>`
+      : `<td>${v.toLocaleString()}</td>`;
+  });
+  cells += `<td class="total">${total.toLocaleString()}</td>`;
+  tr.innerHTML = cells;
+  tbody.appendChild(tr);
+});
+
+// Footer
+const grandTotal = colTotals.reduce((a,b)=>a+b,0);
+const tfoot = document.getElementById('tblFoot');
+const ftr = document.createElement('tr');
+let fcells = `<td class="sticky">총합계</td>`;
+colTotals.forEach(v => { fcells += `<td>${v.toLocaleString()}</td>`; });
+fcells += `<td class="grand">${grandTotal.toLocaleString()}</td>`;
+ftr.innerHTML = fcells;
+tfoot.appendChild(ftr);
+</script>
